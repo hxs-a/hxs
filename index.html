@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吞咽能力评估问卷</title>
+  
+  <style>
+    /* 全局样式重置与基础设置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', 'Heiti SC', sans-serif;
+    }
+    
+    body {
+      background-color: #F5F7FA;
+      color: #333647;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+      min-height: 100vh;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    /* 组件样式 */
+    .card {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.08);
+      padding: 24px;
+      margin-bottom: 30px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card:hover {
+      box-shadow: 0 20px 35px -10px rgba(22, 93, 255, 0.12);
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn-primary {
+      background-color: #165DFF;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #0E4BDB;
+    }
+    
+    .btn-success {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background-color: #3D9140;
+    }
+    
+    .btn-outline {
+      background-color: white;
+      color: #165DFF;
+      border: 1px solid #165DFF;
+    }
+    
+    .btn-outline:hover {
+      background-color: rgba(22, 93, 255, 0.05);
+    }
+    
+    /* 标题样式 */
+    .h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #165DFF;
+    }
+    
+    .h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    
+    .h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    
+    /* 单选按钮样式 */
+    .radio-group {
+      margin-bottom: 16px;
+    }
+    
+    .radio-option {
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .radio-option:hover {
+      transform: translateY(-2px);
+    }
+    
+    .radio-option input {
+      display: none;
+    }
+    
+    .radio-option label {
+      display: flex;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .radio-option input:checked + label {
+      border-color: #165DFF;
+      background-color: rgba(22, 93, 255, 0.05);
+    }
+    
+    .radio-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid #CCCCCC;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .radio-option input:checked + label .radio-dot {
+      border-color: #165DFF;
+      background-color: #165DFF;
+    }
+    
+    .radio-dot-inner {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: white;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    
+    .radio-option input:checked + label .radio-dot-inner {
+      opacity: 1;
+    }
+    
+    /* 问题组样式 */
+    .question-group {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #F0F0F0;
+    }
+    
+    .question-group:last-child {
+      border-bottom: none;
+      margin-bottom: 24px;
+      padding-bottom: 0;
+    }
+    
+    .question-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: rgba(22, 93, 255, 0.1);
+      color: #165DFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    /* 提示框样式 */
+    .alert {
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      background-color: rgba(22, 93, 255, 0.05);
+      border-left: 4px solid #165DFF;
+    }
+    
+    .alert p {
+      font-size: 14px;
+      color: #333647;
+    }
+    
+    .alert strong {
+      color: #165DFF;
+    }
+    
+    /* 结果卡片样式 */
+    .result-card {
+      background-color: rgba(22, 93, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(22, 93, 255, 0.1);
+    }
+    
+    .result-item {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .result-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    /* 列表样式 */
+    .list {
+      list-style: none;
+    }
+    
+    .list-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .list-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .list-item i {
+      color: #165DFF;
+      margin-right: 12px;
+      margin-top: 4px;
+    }
+    
+    /* 头部样式 */
+    .header {
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-icon {
+      margin-right: 8px;
+      font-size: 24px;
+      color: #165DFF;
+    }
+    
+    /* 页脚样式 */
+    .footer {
+      background-color: white;
+      border-top: 1px solid #F0F0F0;
+      padding: 24px 0;
+      margin-top: 40px;
+      text-align: center;
+    }
+    
+    .footer-text {
+      font-size: 14px;
+      color: #888888;
+      margin-bottom: 8px;
+    }
+    
+    /* 颜色辅助类 */
+    .text-success {
+      color: #4CAF50;
+    }
+    
+    .text-blue {
+      color: #2196F3;
+    }
+    
+    .text-warning {
+      color: #FFA726;
+    }
+    
+    .text-orange {
+      color: #FF9800;
+    }
+    
+    .text-danger {
+      color: #F44336;
+    }
+    
+    .text-gray {
+      color: #666666;
+    }
+    
+    .text-sm {
+      font-size: 14px;
+    }
+    
+    /* 间距类 */
+    .mt-2 {
+      margin-top: 8px;
+    }
+    
+    .mt-4 {
+      margin-top: 16px;
+    }
+    
+    .mt-6 {
+      margin-top: 24px;
+    }
+    
+    .mt-8 {
+      margin-top: 32px;
+    }
+    
+    .mb-2 {
+      margin-bottom: 8px;
+    }
+    
+    .mb-4 {
+      margin-bottom: 16px;
+    }
+    
+    .mb-6 {
+      margin-bottom: 24px;
+    }
+    
+    .mb-8 {
+      margin-bottom: 32px;
+    }
+    
+    /* 布局类 */
+    .flex {
+      display: flex;
+    }
+    
+    .items-center {
+      align-items: center;
+    }
+    
+    .justify-center {
+      justify-content: center;
+    }
+    
+    .justify-between {
+      justify-content: space-between;
+    }
+    
+    .flex-col {
+      flex-direction: column;
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
+    /* 隐藏/显示类 */
+    .hidden {
+      display: none;
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .h1 {
+        font-size: 20px;
+      }
+      
+      .h2 {
+        font-size: 18px;
+      }
+      
+      .h3 {
+        font-size: 16px;
+      }
+      
+      .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+      
+      .card {
+        padding: 16px;
+      }
+      
+      .question-group {
+        margin-bottom: 30px;
+        padding-bottom: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 顶部导航 -->
+  <header class="header" id="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">♥</span>
+          <h1 class="h1">吞咽能力评估系统</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="container" style="padding: 32px 0;">
+    <!-- 介绍卡片 -->
+    <section id="intro-section" class="animate-fade-in">
+      <div class="card">
+        <div class="flex items-center mb-6">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background-color: rgba(22, 93, 255, 0.1); display: flex; align-items: center; justify-content: center; margin-right: 16px;">
+            <span style="color: #165DFF; font-size: 20px;">i</span>
+          </div>
+          <h2 class="h2" style="margin-bottom: 0;">关于本次评估</h2>
+        </div>
+        <p style="color: #666666; margin-bottom: 24px; line-height: 1.8;">
+          本问卷旨在评估您的吞咽能力等级，通过以下问题，我们将为您提供个性化的蛋白与米粉最佳配比建议，
+          帮助您获得更安全、更适宜的饮食方案。评估过程仅需3分钟，请根据实际情况如实回答每一个问题。
+        </p>
+        <div class="alert">
+          <p>
+            <strong>温馨提示：</strong>本评估结果仅供参考，不能替代专业医疗建议。如果您有严重的吞咽困难问题，请及时咨询医生。
+          </p>
+        </div>
+        <button id="start-btn" class="btn btn-primary" style="width: 100%;">
+          开始评估 <span style="margin-left: 8px;">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 问卷卡片（所有问题一起显示） -->
+    <section id="quiz-section" class="hidden animate-fade-in">
+      <div class="card">
+        <h2 class="h2" style="display: flex; align-items: center;">
+          <span style="color: #165DFF; margin-right: 12px;">📋</span> 吞咽能力评估问卷
+        </h2>
+        
+        <form id="quiz-form">
+          <!-- 问题1 -->
+          <div class="question-group">
+            <h3 class="h3" style="display: flex; align-items: center;">
+              <span class="question-number">1</span>
+              进食时，食物通过喉咙的顺畅程度？
+            </h3>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="q1a1" name="q1" value="5" required>
+                <label for="q1a1">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  非常顺畅，无任何阻碍
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q1a2" name="q1" value="4">
+                <label for="q1a2">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  基本顺畅，偶尔有轻微卡顿
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q1a3" name="q1" value="3">
+                <label for="q1a3">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  时有阻碍，需要刻意吞咽
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q1a4" name="q1" value="2">
+                <label for="q1a4">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  频繁卡顿，需要多次吞咽
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q1a5" name="q1" value="1">
+                <label for="q1a5">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  严重阻碍，难以吞咽
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 问题2 -->
+          <div class="question-group">
+            <h3 class="h3" style="display: flex; align-items: center;">
+              <span class="question-number">2</span>
+              吞咽时是否有呛咳或误吸的情况？
+            </h3>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="q2a1" name="q2" value="5" required>
+                <label for="q2a1">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  从未发生
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q2a2" name="q2" value="4">
+                <label for="q2a2">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  极偶尔发生（每月少于1次）
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q2a3" name="q2" value="3">
+                <label for="q2a3">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  偶尔发生（每周1-2次）
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q2a4" name="q2" value="2">
+                <label for="q2a4">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  经常发生（每天1-2次）
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q2a5" name="q2" value="1">
+                <label for="q2a5">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  频繁发生（每次进食都有）
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 问题3 -->
+          <div class="question-group">
+            <h3 class="h3" style="display: flex; align-items: center;">
+              <span class="question-number">3</span>
+              吞咽后是否感觉食物残留于咽喉或食管？
+            </h3>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="q3a1" name="q3" value="5" required>
+                <label for="q3a1">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  无任何残留感
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q3a2" name="q3" value="4">
+                <label for="q3a2">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  极偶尔有轻微残留感
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q3a3" name="q3" value="3">
+                <label for="q3a3">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  时有残留感，需喝水冲下
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q3a4" name="q3" value="2">
+                <label for="q3a4">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  经常有明显残留感，影响进食
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q3a5" name="q3" value="1">
+                <label for="q3a5">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  严重残留，多次吞咽仍无法清除
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 问题4 -->
+          <div class="question-group">
+            <h3 class="h3" style="display: flex; align-items: center;">
+              <span class="question-number">4</span>
+              吞咽时是否有疼痛或不适感？
+            </h3>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="q4a1" name="q4" value="5" required>
+                <label for="q4a1">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  无任何疼痛或不适
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q4a2" name="q4" value="4">
+                <label for="q4a2">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  极偶尔有轻微不适
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q4a3" name="q4" value="3">
+                <label for="q4a3">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  时有轻微疼痛，可忍受
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q4a4" name="q4" value="2">
+                <label for="q4a4">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  经常有明显疼痛，影响进食
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q4a5" name="q4" value="1">
+                <label for="q4a5">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  剧烈疼痛，难以进食
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 问题5 -->
+          <div class="question-group">
+            <h3 class="h3" style="display: flex; align-items: center;">
+              <span class="question-number">5</span>
+              您能正常吞咽哪种质地的食物？（选择最符合的一项）
+            </h3>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="q5a1" name="q5" value="5" required>
+                <label for="q5a1">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  所有质地（固体、半流质、流质）都能正常吞咽
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q5a2" name="q5" value="4">
+                <label for="q5a2">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  大部分食物都能吞咽，仅极硬食物需谨慎
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q5a3" name="q5" value="3">
+                <label for="q5a3">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  只能吞咽软食和半流质食物，固体食物困难
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q5a4" name="q5" value="2">
+                <label for="q5a4">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  只能吞咽流质食物，半流质食物需谨慎
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q5a5" name="q5" value="1">
+                <label for="q5a5">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  仅能少量吞咽流质食物，存在窒息风险
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 问题6 -->
+          <div class="question-group">
+            <h3 class="h3" style="display: flex; align-items: center;">
+              <span class="question-number">6</span>
+              进食后是否会出现食物反流或呕吐？
+            </h3>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="q6a1" name="q6" value="5" required>
+                <label for="q6a1">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  从未发生
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q6a2" name="q6" value="4">
+                <label for="q6a2">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  极偶尔发生（每月少于1次）
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q6a3" name="q6" value="3">
+                <label for="q6a3">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  偶尔发生（每周1-2次）
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q6a4" name="q6" value="2">
+                <label for="q6a4">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  经常发生（每天1-2次）
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="q6a5" name="q6" value="1">
+                <label for="q6a5">
+                  <span class="radio-dot">
+                    <span class="radio-dot-inner"></span>
+                  </span>
+                  每次进食后都会发生
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 提交按钮 -->
+          <div class="flex justify-center mt-8">
+            <button type="submit" id="submit-btn" class="btn btn-success" style="font-size: 18px; padding: 12px 32px;">
+              <span style="margin-right: 8px;">✓</span> 提交评估
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 结果卡片 -->
+    <section id="result-section" class="hidden animate-fade-in">
+      <div class="card">
+        <div class="flex items-center mb-6">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background-color: rgba(76, 175, 80, 0.1); display: flex; align-items: center; justify-content: center; margin-right: 16px;">
+            <span style="color: #4CAF50; font-size: 20px;">✓</span>
+          </div>
+          <h2 class="h2" style="margin-bottom: 0;">评估结果</h2>
+        </div>
+        
+        <!-- 结果内容 -->
+        <div id="result-content" class="mb-8">
+          <!-- 结果将通过JS动态生成 -->
+        </div>
+        
+        <!-- 配比建议卡片 -->
+        <div class="result-card">
+          <h3 class="h3" style="display: flex; align-items: center; color: #165DFF;">
+            <span style="margin-right: 8px;">⚗️</span> 个性化蛋白米粉配比建议
+          </h3>
+          <div id="ratio-recommendation" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- 配比建议将通过JS动态生成 -->
+          </div>
+        </div>
+        
+        <!-- 饮食建议 -->
+        <div class="mb-8">
+          <h3 class="h3" style="display: flex; align-items: center;">
+            <span style="margin-right: 8px;">🍽️</span> 饮食注意事项
+          </h3>
+          <ul class="list" id="dietary-advice">
+            <!-- 饮食建议将通过JS动态生成 -->
+          </ul>
+        </div>
+        
+        <div class="flex justify-center">
+          <button id="restart-btn" class="btn btn-outline" style="font-size: 18px; padding: 12px 32px;">
+            <span style="margin-right: 8px;">↻</span> 重新评估
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">© 2025 吞咽能力评估系统 - 本评估结果仅供参考，不构成医疗建议</p>
+      <p class="footer-text">如有疑问，请咨询专业医护人员</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // DOM元素
+    const introSection = document.getElementById('intro-section');
+    const quizSection = document.getElementById('quiz-section');
+    const resultSection = document.getElementById('result-section');
+    const startBtn = document.getElementById('start-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const quizForm = document.getElementById('quiz-form');
+    const resultContent = document.getElementById('result-content');
+    const ratioRecommendation = document.getElementById('ratio-recommendation');
+    const dietaryAdvice = document.getElementById('dietary-advice');
+    const header = document.getElementById('header');
+    const totalQuestions = 6; // 问题总数
+    
+    // 监听滚动事件，改变导航栏样式
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        header.style.padding = '8px 0';
+        header.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+      } else {
+        header.style.padding = '16px 0';
+        header.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)';
+      }
+    });
+    
+    // 开始评估按钮点击事件
+    startBtn.addEventListener('click', () => {
+      introSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // 表单提交事件
+    quizForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // 阻止表单默认提交
+      
+      // 计算总分
+      const totalScore = calculateTotalScore();
+      // 生成结果
+      generateResult(totalScore);
+      // 切换到结果页面
+      quizSection.classList.add('hidden');
+      resultSection.classList.remove('hidden');
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // 重新评估按钮点击事件
+    restartBtn.addEventListener('click', () => {
+      // 重置表单
+      quizForm.reset();
+      // 切换到问卷页面
+      resultSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // 计算总分
+    function calculateTotalScore() {
+      let score = 0;
+      for (let i = 1; i <= totalQuestions; i++) {
+        const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selectedOption) {
+          score += parseInt(selectedOption.value);
+        }
+      }
+      return score;
+    }
+    
+    // 生成结果
+    function generateResult(score) {
+      // 吞咽能力等级划分配置
+      const gradeConfig = [
+        {
+          minScore: 26,
+          maxScore: 30,
+          level: "一级（正常吞咽能力）",
+          colorClass: "text-success",
+          desc: "您的吞咽功能完全正常，能够安全吞咽各种质地的食物，没有呛咳、残留或疼痛等不适症状。",
+          ratio: "蛋白 : 米粉 = 1 : 2",
+          ratioDesc: "适合正常吞咽能力人群，高蛋白比例，提供充足营养，口感适中，易于消化吸收。",
+          advice: [
+            "保持正常的饮食习惯和进食速度",
+            "继续保持充分咀嚼的良好习惯",
+            "多样化饮食，保证营养均衡",
+            "进食时保持专注，避免边吃边做其他事情"
+          ]
+        },
+        {
+          minScore: 21,
+          maxScore: 25,
+          level: "二级（轻度吞咽困难）",
+          colorClass: "text-blue",
+          desc: "您存在轻度吞咽困难，主要表现为偶尔有食物残留感或轻微呛咳，对大部分食物仍能正常吞咽。",
+          ratio: "蛋白 : 米粉 = 1 : 3",
+          ratioDesc: "适度增加米粉比例，使食物质地更顺滑，减少吞咽阻力，同时保证蛋白质摄入满足身体需求。",
+          advice: [
+            "进食时保持坐姿，头部稍向前倾",
+            "固体食物尽量切成小块，充分咀嚼",
+            "每口食物量不宜过多，小口慢咽",
+            "进食后可适当喝水，帮助清除可能的食物残留"
+          ]
+        },
+        {
+          minScore: 16,
+          maxScore: 20,
+          level: "三级（中度吞咽困难）",
+          colorClass: "text-warning",
+          desc: "您存在中度吞咽困难，吞咽固体食物时有明显困难，频繁出现食物残留感，偶尔有呛咳发生，需要特别注意饮食安全。",
+          ratio: "蛋白 : 米粉 = 1 : 5",
+          ratioDesc: "高米粉比例，使食物呈细腻糊状，显著降低吞咽难度，减少呛咳和残留风险。建议将食物加工成软食或半流质状态。",
+          advice: [
+            "避免食用坚硬、干燥、粘性强的食物",
+            "选择软食、半流质食物，如粥、烂面条、蒸蛋等",
+            "进食时集中注意力，避免交谈或分心",
+            "进食后保持直立姿势30分钟以上，防止食物反流",
+            "定期进行吞咽功能训练，如空咽练习"
+          ]
+        },
+        {
+          minScore: 11,
+          maxScore: 15,
+          level: "四级（中重度吞咽困难）",
+          colorClass: "text-orange",
+          desc: "您存在中重度吞咽困难，吞咽半流质食物也有明显困难，频繁呛咳，食物残留感严重，存在误吸风险。",
+          ratio: "蛋白 : 米粉 = 1 : 7",
+          ratioDesc: "极高米粉比例，制成顺滑流质或半流质，最大程度降低吞咽难度。建议使用搅拌机将食物打成糊状后食用。",
+          advice: [
+            "严格避免固体食物，选择流质或半流质食物",
+            "食物质地以顺滑、无颗粒为宜",
+            "进食时速度要慢，每口食物后停顿片刻",
+            "建议使用吸管进食流质食物，减少呛咳风险",
+            "定期就医评估吞咽功能，必要时进行专业康复训练"
+          ]
+        },
+        {
+          minScore: 6,
+          maxScore: 10,
+          level: "五级（重度吞咽困难）",
+          colorClass: "text-danger",
+          desc: "您存在重度吞咽困难，吞咽功能严重受损，即使是流质食物也可能出现呛咳或误吸，存在窒息风险，需要专业医疗干预。",
+          ratio: "蛋白 : 米粉 = 1 : 9",
+          ratioDesc: "超高米粉比例，制成极细腻的流质，最大程度降低吞咽难度。建议在医生或营养师指导下进行饮食调配，必要时使用专业营养制剂。",
+          advice: [
+            "立即咨询医生，进行专业的吞咽功能评估",
+            "避免自行进食，防止窒息和误吸导致肺炎",
+            "饮食以流质为主，可使用增稠剂调整食物质地",
+            "进食时需要有人陪同，以防突发情况",
+            "遵医嘱进行吞咽康复训练，必要时考虑鼻饲等营养支持方式"
+          ]
+        }
+      ];
+      
+      // 根据分数匹配对应的配置
+      const currentConfig = gradeConfig.find(config => 
+        score >= config.minScore && score <= config.maxScore
+      ) || gradeConfig[gradeConfig.length - 1];
+      
+      // 生成结果HTML
+      resultContent.innerHTML = `
+        <div style="display: flex; flex-direction: column; md:flex-direction: row; align-items: center; md:align-items: flex-start; margin-bottom: 24px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background-color: rgba(22, 93, 255, 0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; md:margin-bottom: 0; md:margin-right: 24px;">
+            <span style="color: #165DFF; font-size: 28px;">📊</span>
+          </div>
+          <div>
+            <h3 class="h3" style="margin-bottom: 8px;">吞咽能力等级：<span class="${currentConfig.colorClass}">${currentConfig.level}</span></h3>
+            <p style="color: #666666; line-height: 1.8;">${currentConfig.desc}</p>
+          </div>
+        </div>
+        <div style="background-color: #F5F7FA; border-radius: 8px; padding: 16px;">
+          <p style="color: #666666;">
+            <strong>评估得分：</strong> ${score}分（满分${totalQuestions * 5}分）
+          </p>
+        </div>
+      `;
+      
+      // 生成配比建议HTML
+      ratioRecommendation.innerHTML = `
+        <div style="background-color: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-weight: 500;">推荐配比</span>
+            <span style="font-size: 18px; font-weight: 600; class="${currentConfig.colorClass}">${currentConfig.ratio}</span>
+          </div>
+          <p style="color: #666666; font-size: 14px; line-height: 1.6;">${currentConfig.ratioDesc}</p>
+        </div>
+        <div style="background-color: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+          <h4 style="font-weight: 500; margin-bottom: 12px;">调制方法：</h4>
+          <ol style="list-style-type: decimal; list-style-position: inside; color: #666666; font-size: 14px; line-height: 1.8; gap: 8px; display: flex; flex-direction: column;">
+            <li>按照推荐比例准备蛋白粉和米粉（例如1:5配比即1份蛋白粉+5份米粉）</li>
+            <li>先将米粉加入适量温水或温开水中，搅拌均匀至无颗粒</li>
+            <li>再加入蛋白粉，继续搅拌至完全溶解，质地顺滑</li>
+            <li>根据个人口感需求，可适当调整液体量，控制食物稠度</li>
+            <li>建议现调现用，避免长时间放置影响口感和营养成分</li>
+            <li>可根据喜好加入少量蔬菜泥或水果泥，增加营养多样性</li>
+          </ol>
+        </div>
+      `;
+      
+      // 生成饮食建议HTML
+      let adviceHtml = '';
+      currentConfig.advice.forEach((item, index) => {
+        adviceHtml += `
+          <li class="list-item">
+            <span style="color: #165DFF; margin-right: 12px; margin-top: 4px;">•</span>
+            <span>${item}</span>
+          </li>
+        `;
+      });
+      dietaryAdvice.innerHTML = adviceHtml;
+    }
+  </script>
+</body>
+</html>
