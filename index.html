@@ -176,6 +176,33 @@
       opacity: 1;
     }
     
+    /* 输入框样式（新增） */
+    .input-group {
+      margin-bottom: 24px;
+    }
+    
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333647;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #165DFF;
+      box-shadow: 0 0 0 2px rgba(22, 93, 255, 0.1);
+    }
+    
     /* 问题组样式 */
     .question-group {
       margin-bottom: 40px;
@@ -236,10 +263,6 @@
       padding: 16px;
       margin-bottom: 16px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    
-    .result-item:last-child {
-      margin-bottom: 0;
     }
     
     /* 列表样式 */
@@ -468,7 +491,7 @@
       </div>
     </section>
 
-    <!-- 问卷卡片（所有问题一起显示） -->
+    <!-- 问卷卡片（所有问题一起显示，新增填空问题） -->
     <section id="quiz-section" class="hidden animate-fade-in">
       <div class="card">
         <h2 class="h2" style="display: flex; align-items: center;">
@@ -476,6 +499,32 @@
         </h2>
         
         <form id="quiz-form">
+          <!-- 新增：个人信息填空问题 -->
+          <div class="question-group">
+            <h3 class="h3" style="display: flex; align-items: center; margin-bottom: 24px;">
+              <span class="question-number">📝</span>
+              个人基本信息
+            </h3>
+            
+            <!-- 姓名输入框 -->
+            <div class="input-group">
+              <label for="name" class="input-label">姓名</label>
+              <input type="text" id="name" name="name" class="input-field" placeholder="请输入您的姓名" required>
+            </div>
+            
+            <!-- 年龄输入框 -->
+            <div class="input-group">
+              <label for="age" class="input-label">年龄</label>
+              <input type="number" id="age" name="age" class="input-field" placeholder="请输入您的年龄（岁）" min="1" max="120" required>
+            </div>
+            
+            <!-- 体重输入框 -->
+            <div class="input-group">
+              <label for="weight" class="input-label">体重</label>
+              <input type="number" id="weight" name="weight" class="input-field" placeholder="请输入您的体重（kg）" min="1" max="200" step="0.1" required>
+            </div>
+          </div>
+          
           <!-- 问题1 -->
           <div class="question-group">
             <h3 class="h3" style="display: flex; align-items: center;">
@@ -816,7 +865,7 @@
       </div>
     </section>
 
-    <!-- 结果卡片 -->
+    <!-- 结果卡片（显示个人信息） -->
     <section id="result-section" class="hidden animate-fade-in">
       <div class="card">
         <div class="flex items-center mb-6">
@@ -826,7 +875,7 @@
           <h2 class="h2" style="margin-bottom: 0;">评估结果</h2>
         </div>
         
-        <!-- 结果内容 -->
+        <!-- 结果内容（包含个人信息） -->
         <div id="result-content" class="mb-8">
           <!-- 结果将通过JS动态生成 -->
         </div>
@@ -906,10 +955,15 @@
     quizForm.addEventListener('submit', (e) => {
       e.preventDefault(); // 阻止表单默认提交
       
+      // 获取个人信息（新增）
+      const name = document.getElementById('name').value;
+      const age = document.getElementById('age').value;
+      const weight = document.getElementById('weight').value;
+      
       // 计算总分
       const totalScore = calculateTotalScore();
-      // 生成结果
-      generateResult(totalScore);
+      // 生成结果（传入个人信息）
+      generateResult(totalScore, name, age, weight);
       // 切换到结果页面
       quizSection.classList.add('hidden');
       resultSection.classList.remove('hidden');
@@ -940,14 +994,14 @@
       return score;
     }
     
-    // 生成结果
-    function generateResult(score) {
+    // 生成结果（新增个人信息参数）
+    function generateResult(score, name, age, weight) {
       // 吞咽能力等级划分配置
       const gradeConfig = [
         {
           minScore: 26,
           maxScore: 30,
-          level: "一级（正常吞咽能力）",
+          level: "六级",
           colorClass: "text-success",
           desc: "您的吞咽功能完全正常，能够安全吞咽各种质地的食物，没有呛咳、残留或疼痛等不适症状。",
           ratio: "蛋白 : 米粉 = 1 : 2",
@@ -957,12 +1011,14 @@
             "继续保持充分咀嚼的良好习惯",
             "多样化饮食，保证营养均衡",
             "进食时保持专注，避免边吃边做其他事情"
-          ]
+          ],
+          image: "images/6006.png",
+          mixImage: "images/006.png" // 保留图片路径（如有上传）
         },
         {
           minScore: 21,
           maxScore: 25,
-          level: "二级（轻度吞咽困难）",
+          level: "五级",
           colorClass: "text-blue",
           desc: "您存在轻度吞咽困难，主要表现为偶尔有食物残留感或轻微呛咳，对大部分食物仍能正常吞咽。",
           ratio: "蛋白 : 米粉 = 1 : 3",
@@ -972,12 +1028,14 @@
             "固体食物尽量切成小块，充分咀嚼",
             "每口食物量不宜过多，小口慢咽",
             "进食后可适当喝水，帮助清除可能的食物残留"
-          ]
+          ],
+          image: "images/5005.png",
+          mixImage: "images/005.png"
         },
         {
           minScore: 16,
           maxScore: 20,
-          level: "三级（中度吞咽困难）",
+          level: "四级",
           colorClass: "text-warning",
           desc: "您存在中度吞咽困难，吞咽固体食物时有明显困难，频繁出现食物残留感，偶尔有呛咳发生，需要特别注意饮食安全。",
           ratio: "蛋白 : 米粉 = 1 : 5",
@@ -988,12 +1046,14 @@
             "进食时集中注意力，避免交谈或分心",
             "进食后保持直立姿势30分钟以上，防止食物反流",
             "定期进行吞咽功能训练，如空咽练习"
-          ]
+          ],
+          image: "images/4004.png",
+          mixImage: "images/004.png"
         },
         {
           minScore: 11,
           maxScore: 15,
-          level: "四级（中重度吞咽困难）",
+          level: "三级",
           colorClass: "text-orange",
           desc: "您存在中重度吞咽困难，吞咽半流质食物也有明显困难，频繁呛咳，食物残留感严重，存在误吸风险。",
           ratio: "蛋白 : 米粉 = 1 : 7",
@@ -1004,14 +1064,16 @@
             "进食时速度要慢，每口食物后停顿片刻",
             "建议使用吸管进食流质食物，减少呛咳风险",
             "定期就医评估吞咽功能，必要时进行专业康复训练"
-          ]
+          ],
+          mixImage: "images/003.png",
+          image: "images/3003.png",
         },
         {
           minScore: 6,
           maxScore: 10,
-          level: "五级（重度吞咽困难）",
+          level: "二级",
           colorClass: "text-danger",
-          desc: "您存在重度吞咽困难，吞咽功能严重受损，即使是流质食物也可能出现呛咳或误吸，存在窒息风险，需要专业医疗干预。",
+          desc: "您目前吞咽障碍严重，不适合经口食用本款产品，建议咨询医生，定制科学的营养补充方式和建议",
           ratio: "蛋白 : 米粉 = 1 : 9",
           ratioDesc: "超高米粉比例，制成极细腻的流质，最大程度降低吞咽难度。建议在医生或营养师指导下进行饮食调配，必要时使用专业营养制剂。",
           advice: [
@@ -1020,7 +1082,9 @@
             "饮食以流质为主，可使用增稠剂调整食物质地",
             "进食时需要有人陪同，以防突发情况",
             "遵医嘱进行吞咽康复训练，必要时考虑鼻饲等营养支持方式"
-          ]
+          ],
+          image: "images/2002.png",
+          
         }
       ];
       
@@ -1029,12 +1093,34 @@
         score >= config.minScore && score <= config.maxScore
       ) || gradeConfig[gradeConfig.length - 1];
       
-      // 生成结果HTML
+      // 生成结果HTML（新增个人信息展示）
       resultContent.innerHTML = `
-        <div style="display: flex; flex-direction: column; md:flex-direction: row; align-items: center; md:align-items: flex-start; margin-bottom: 24px;">
-          <div style="width: 64px; height: 64px; border-radius: 50%; background-color: rgba(22, 93, 255, 0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; md:margin-bottom: 0; md:margin-right: 24px;">
-            <span style="color: #165DFF; font-size: 28px;">📊</span>
+        <!-- 新增：个人信息卡片 -->
+        <div style="background-color: #F5F7FA; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+          <h3 class="h3" style="margin-bottom: 12px; font-size: 16px;">个人信息</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+            <div>
+              <span style="color: #666;">姓名：</span>
+              <strong>${name}</strong>
+            </div>
+            <div>
+              <span style="color: #666;">年龄：</span>
+              <strong>${age} 岁</strong>
+            </div>
+            <div>
+              <span style="color: #666;">体重：</span>
+              <strong>${weight} kg</strong>
+            </div>
           </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; md:flex-direction: row; align-items: center; md:align-items: flex-start; margin-bottom: 24px;">
+          <img src="${currentConfig.image}" alt="${currentConfig.level}" 
+            style="width: 100%; max-width: 300px; border-radius: 8px; margin-bottom: 16px;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; md:flex-direction: row; align-items: center; md:align-items: flex-start; margin-bottom: 24px;">
+         
           <div>
             <h3 class="h3" style="margin-bottom: 8px;">吞咽能力等级：<span class="${currentConfig.colorClass}">${currentConfig.level}</span></h3>
             <p style="color: #666666; line-height: 1.8;">${currentConfig.desc}</p>
@@ -1047,17 +1133,18 @@
         </div>
       `;
       
-      // 生成配比建议HTML
+      // 生成配比建议HTML（保留图片显示逻辑）
       ratioRecommendation.innerHTML = `
         <div style="background-color: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-            <span style="font-weight: 500;">推荐配比</span>
-            <span style="font-size: 18px; font-weight: 600; class="${currentConfig.colorClass}">${currentConfig.ratio}</span>
+          <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+            <img src="${currentConfig.mixImage}" alt="${currentConfig.level} - 调制方法" 
+              style="width: 100%; max-width: 350px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
           </div>
-          <p style="color: #666666; font-size: 14px; line-height: 1.6;">${currentConfig.ratioDesc}</p>
-        </div>
         <div style="background-color: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
           <h4 style="font-weight: 500; margin-bottom: 12px;">调制方法：</h4>
+          
+         
+          
           <ol style="list-style-type: decimal; list-style-position: inside; color: #666666; font-size: 14px; line-height: 1.8; gap: 8px; display: flex; flex-direction: column;">
             <li>按照推荐比例准备蛋白粉和米粉（例如1:5配比即1份蛋白粉+5份米粉）</li>
             <li>先将米粉加入适量温水或温开水中，搅拌均匀至无颗粒</li>
@@ -1083,4 +1170,7 @@
     }
   </script>
 </body>
+</html>
+</body>
+
 </html>
